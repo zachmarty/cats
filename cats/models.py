@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Breed(models.Model):
     name = models.CharField(max_length=40, unique=True)
@@ -24,7 +26,7 @@ class Cat(models.Model):
     age = models.PositiveIntegerField()
     description = models.TextField(max_length=1000, blank=True, null=True)
     breed = models.ForeignKey(Breed, on_delete=models.CASCADE)
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     class Meta:
         verbose_name = "Кот"
         verbose_name_plural = "Коты"

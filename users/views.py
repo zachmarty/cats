@@ -23,6 +23,7 @@ class UserCreateView(CreateAPIView):
         data = request.data
         if "is_active" in data:
             data["is_active"] = False
+        data['password'] = make_password(data['password'])
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -65,10 +66,9 @@ class VerifyEmail(GenericAPIView):
         token = request.GET.get("token")
         try:
             payload = jwt.decode(token, options={"verify_signature": False})
-            print(payload)
             user = User.objects.get(id=payload["user_id"])
-            if not user.is_verified:
-                user.is_verified = True
+            if not user.is_active:
+                user.is_active = True
                 user.save()
             return Response(
                 {"email": "Successfully activated"}, status=status.HTTP_200_OK
