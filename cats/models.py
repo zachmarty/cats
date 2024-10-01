@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 from users.models import User
 
 
@@ -53,13 +53,15 @@ class Rate(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name="Пользователь"
     )
-    positive = models.BooleanField(
-        default=False, verbose_name="Положительный/негативный"
+    value = models.IntegerField(
+        validators=[MaxValueValidator(5), MinValueValidator(1)],
+        default=1,
+        verbose_name="Оценка",
     )
 
     class Meta:
-        verbose_name = "Отметка"
-        verbose_name_plural = "Отметки"
+        verbose_name = "Оценка"
+        verbose_name_plural = "Оценки"
         ordering = ["cat", "user"]
 
     def __str__(self) -> str:

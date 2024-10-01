@@ -23,6 +23,6 @@ class BreedAdmin(admin.ModelAdmin):
 
 @admin.register(Rate)
 class RateAdmin(admin.ModelAdmin):
-    list_display = ("cat", "user", "positive")
+    list_display = ("cat", "user", "value")
     list_filter = ("cat",)
     search_fields = ("cat",)

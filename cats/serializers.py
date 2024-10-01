@@ -12,7 +12,7 @@ class CatSerializer(serializers.ModelSerializer):
 
     def get_rating(self, instance):
         if instance.rate_set.all().count():
-            return instance.rate_set.filter(positive = True).count() - instance.rate_set.filter(positive = False).count()
+            return sum(item.value for item in instance.rate_set.all())
         return 0
 
 
@@ -33,5 +33,5 @@ class RateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate
         fields = [
-            "positive",
+            "value",
         ]

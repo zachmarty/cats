@@ -5,9 +5,13 @@ from cats.models import Breed, Cat, Rate
 from cats.permissions import IsUserOrSuper
 from cats.serializers import BreedSerializer, CatSerializer, RateSerializer
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.generics import ListAPIView, GenericAPIView
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
+
+breed_param = openapi.Parameter('breed', openapi.IN_QUERY, description='breed filter', type=openapi.TYPE_STRING)
 
 # Create your views here.
 class RateView(GenericAPIView):
@@ -29,9 +33,11 @@ class RateView(GenericAPIView):
         data = request.data
         if rate.exists():
             rate = rate.first()
-            rate.positive = data['positive']
+            if data['value'] not in (1, 2, 3, 4, 5):
+                raise ValidationError('rate must be in range 1-5')
+            rate.value = data['value']
         else:
-            rate = Rate.objects.create(user = user, cat = cat, positive = data['positive'])
+            rate = Rate.objects.create(user = user, cat = cat, value = data['value'])
         rate.save()
         return Response("rated")
 
@@ -70,6 +76,8 @@ class CatViewSet(ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsUserOrSuper]
         return [permission() for permission in self.permission_classes]
 
+
+    @swagger_auto_schema(manual_parameters=[breed_param])
     def list(self, request, *args, **kwargs):
         """Cat list route"""
         queryset = Cat.objects.all()
