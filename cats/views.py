@@ -1,15 +1,41 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from cats.models import Breed, Cat
+from cats.models import Breed, Cat, Rate
 from cats.permissions import IsUserOrSuper
-from cats.serializers import BreedSerializer, CatSerializer
+from cats.serializers import BreedSerializer, CatSerializer, RateSerializer
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-from rest_framework.generics import ListAPIView
+from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.generics import ListAPIView, GenericAPIView
 
 
 # Create your views here.
+class RateView(GenericAPIView):
+    serializer_class = RateSerializer
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    def post(self, request, cat_id):
+        cat = Cat.objects.filter(id = cat_id)
+        if not cat.exists():
+            raise NotFound(f"Cat with id {cat_id} does not exists")
+        cat = cat.first()
+        user = request.user
+        rate = Rate.objects.filter(user = user)
+        data = request.data
+        if rate.exists():
+            rate = rate.first()
+            rate.positive = data['positive']
+        else:
+            rate = Rate.objects.create(user = user, cat = cat, positive = data['positive'])
+        rate.save()
+        return Response("rated")
+
+
+
+
+
 class BreedListView(ListAPIView):
     serializer_class = BreedSerializer
     queryset = Breed.objects.all()
@@ -28,7 +54,11 @@ class CatViewSet(ModelViewSet):
 
     def get_permissions(self):
         """Получение прав доступа"""
-        if self.action == "update" or self.action == "destroy" or self.action == "partial_update":
+        if (
+            self.action == "update"
+            or self.action == "destroy"
+            or self.action == "partial_update"
+        ):
             self.permission_classes = [IsAuthenticated, IsUserOrSuper]
         return [permission() for permission in self.permission_classes]
 

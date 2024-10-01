@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cats.models import Breed, Cat
+from cats.models import Breed, Cat, Rate
 
 
 @admin.register(Cat)
@@ -19,3 +19,10 @@ class BreedAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "parent_breed")
     list_filter = ("breed",)
     search_fields = ("id", "name")
+
+
+@admin.register(Rate)
+class RateAdmin(admin.ModelAdmin):
+    list_display = ("cat", "user", "positive")
+    list_filter = ("cat",)
+    search_fields = ("cat",)
