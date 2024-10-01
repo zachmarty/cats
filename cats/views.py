@@ -11,6 +11,9 @@ from rest_framework.generics import ListAPIView, GenericAPIView
 
 # Create your views here.
 class RateView(GenericAPIView):
+    """
+    Rate the cat route
+    """
     serializer_class = RateSerializer
     permission_classes = [
         IsAuthenticated,
@@ -37,6 +40,9 @@ class RateView(GenericAPIView):
 
 
 class BreedListView(ListAPIView):
+    """
+    Breed list route
+    """
     serializer_class = BreedSerializer
     queryset = Breed.objects.all()
     permission_classes = [
@@ -45,7 +51,9 @@ class BreedListView(ListAPIView):
 
 
 class CatViewSet(ModelViewSet):
-
+    """
+    CRUD mechanism for cats
+    """
     serializer_class = CatSerializer
     queryset = Cat.objects.all()
     permission_classes = [
@@ -63,6 +71,7 @@ class CatViewSet(ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def list(self, request, *args, **kwargs):
+        """Cat list route"""
         queryset = Cat.objects.all()
         breed_name = self.request.query_params.get("breed")
         if breed_name is not None:
@@ -74,12 +83,10 @@ class CatViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        data = request.data
-        breed = Breed.objects.filter(id=data["breed"])
-        if not breed.exists():
-            raise ValidationError(f"Breed with id {data['breed']} does not exist")
-        breed = breed.first()
-        data["breed"] = breed
+        """Cat create route"""
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+        data = serializer.validated_data
         data["user"] = request.user
         new_cat = Cat.objects.create(**data)
         new_cat.save()
@@ -87,6 +94,7 @@ class CatViewSet(ModelViewSet):
         return Response(instance.data)
 
     def update(self, request, *args, **kwargs):
+        """Cat update route"""
         partial = kwargs.pop("partial", False)
         data = request.data
         instance = self.get_object()
@@ -96,3 +104,11 @@ class CatViewSet(ModelViewSet):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+        
+    def retrieve(self, request, *args, **kwargs):
+        """Cat retrieve route"""
+        return super().retrieve(request, *args, **kwargs)
+    
+    def destroy(self, request, *args, **kwargs):
+        """Cat destroy route"""
+        return super().destroy(request, *args, **kwargs)

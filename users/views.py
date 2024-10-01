@@ -52,6 +52,9 @@ class UserCreateView(CreateAPIView):
 
 
 class VerifyEmail(GenericAPIView):
+    """
+    Verifies the user
+    """
     serializer_class = EmailVerificationSerializer
 
     token_param_config = openapi.Parameter(
