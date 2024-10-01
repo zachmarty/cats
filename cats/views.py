@@ -2,12 +2,17 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 
 from cats.models import Breed, Cat
-from cats.serializers import CatSerializer
+from cats.serializers import BreedSerializer, CatSerializer
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.generics import ListAPIView
 
 
 # Create your views here.
+class BreedListView(ListAPIView):
+    serializer_class = BreedSerializer
+    queryset = Breed.objects.all()
+
 class CatViewSet(ModelViewSet):
     serializer_class = CatSerializer
     queryset = Cat.objects.all()

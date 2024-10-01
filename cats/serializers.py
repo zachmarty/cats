@@ -17,4 +17,5 @@ class BreedSerializer(serializers.ModelSerializer):
         model = Breed
         fields = [
             "name",
+            "cats",
         ]
