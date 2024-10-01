@@ -11,7 +11,7 @@ class CatSerializer(serializers.ModelSerializer):
 
 class BreedSerializer(serializers.ModelSerializer):
 
-    cats = CatSerializer(source = "cat_set", many = True, read_only = True)
+    cats = CatSerializer(source="cat_set", many=True, read_only=True)
 
     class Meta:
         model = Breed
