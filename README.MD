@@ -16,7 +16,7 @@
 - Создать файл переменных окружения .env
 - Обозначить там переменные из файла .env.example:
 - Применить все миграции командой python manage.py migrate
-- Запустить сервер командой python manage.py run server
+- Запустить сервер командой python manage.py runserver
 
 ## API
 
