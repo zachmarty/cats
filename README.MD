@@ -25,3 +25,7 @@
 ## Docker
 
 Для запуска приложения в docker используйте комманды docker-compose build, docker-compose up. После чего к сервису также можно обратиться по адресу http://localhost:8000/
+
+## Тестирование
+
+Тесты описаны в файле cats/tests.py. Для запуска используйте команду python manage.py test.
